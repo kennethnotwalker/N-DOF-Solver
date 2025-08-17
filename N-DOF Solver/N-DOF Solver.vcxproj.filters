@@ -41,5 +41,8 @@
     <ClCompile Include="Examples\3D 3DOF System.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="6DOF Iteration Tester.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

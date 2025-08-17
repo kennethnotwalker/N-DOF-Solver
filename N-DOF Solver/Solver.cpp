@@ -46,28 +46,53 @@ double distanceToAnswer(double* inputs, double* answer, int size) //fx = final x
 	return diff;
 }
 
-double* getRotation(double* targetPosition, struct_constraint* constraints, int size, double (*_fx)(double*, int), double (*_fy)(double*, int), double (*_fz)(double*, int), double min_error, double min_square_error_change) //position is 3-Dimensional
+double* getRotation(double* rotations, double* targetPosition, struct_constraint* constraints, int size, double (*_fx)(double*, int), double (*_fy)(double*, int), double (*_fz)(double*, int), int max_iter, double min_error, double min_error_change, double momentum, int* iteration_counter) //position is 3-Dimensional
 {
-	double* rotations = zeroVector(size);
 	fx = _fx;
 	fy = _fy;
 	fz = _fz;
 	//solve using gradient descent
 	double error = distanceToAnswer(rotations, targetPosition, size);
+	double* velocity = zeroVector(size);
+	int gradCount = 0;
+
 	double change = 1;
-	while (error > min_error && change*change > min_square_error_change)
+	double step = STEP_SIZE;
+	double changeScale = 1;
+	int iter = 0;
+	while (error > min_error && change > min_error_change*changeScale && (max_iter < 0 || iter < max_iter))
 	{
-		double* grad = gradient(rotations, targetPosition, size, distanceToAnswer);
-		scaleSelf(grad, -STEP_SIZE, size);
-		addTo(rotations, grad, size);
+		double* delta = scale(velocity, -STEP_SIZE * momentum, size);
+		double* input = add(rotations, delta, size);
+		double* scaledGrad = gradient(input, targetPosition, size, distanceToAnswer);
+		delete[] delta;
+		delete[] input;
+
+		scaleSelf(velocity, momentum, size);
+		addTo(velocity, scaledGrad, size);
+		delete[] scaledGrad;
+
+		double* velocityAdded = scale(velocity, -step, size);
+		addTo(rotations, velocityAdded, size);
+		delete[] velocityAdded;
+
 		for (int i = 0; i < size; i++)
 		{
 			rotations[i] = clamp(rotations[i], constraints[i].min, constraints[i].max);
 		}
 		double newError = distanceToAnswer(rotations, targetPosition, size);
 		change = newError - error;
+		if (change < 0) { change *= -1; }
 		error = newError;
-		delete[] grad;
+		
+		iter++;
+		step *= 1 - STEP_DECAY;
+		changeScale *= 1 - STEP_DECAY;
+	}
+
+	if (iteration_counter != nullptr)
+	{
+		(*iteration_counter) = iter;
 	}
 
 	return rotations;

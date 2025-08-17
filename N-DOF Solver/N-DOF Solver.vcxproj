@@ -132,6 +132,7 @@
     <ClInclude Include="TestFunc.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="6DOF Iteration Tester.cpp" />
     <ClCompile Include="Examples\2D 6DOF System.cpp" />
     <ClCompile Include="Examples\3D 3DOF System.cpp" />
     <ClCompile Include="Solver.cpp" />

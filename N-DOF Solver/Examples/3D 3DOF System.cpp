@@ -20,7 +20,7 @@ double z_3DOF(double* A, int size) //z coordinate of end-point given all angles
 	return (lengths_3DOF[0] * sin(A[1]) + lengths_3DOF[1] * sin(A[2]));
 }
 
-int _main(void)
+int main_0(void)
 {
 	double pos[3] = { 0.5, 0.2, 0.2 };
 	Constraint* constraints = halfCircleConstraints(3);
@@ -30,10 +30,10 @@ int _main(void)
 
 	double rotations[3] = { 0, 0, 0 };
 
-	double* rot = getRotation(pos, constraints, 3, x_3DOF, y_3DOF, z_3DOF);
-	double r0 = rot[0];
-	double r1 = rot[1];
-	double r2 = rot[2];
+	getRotation(rotations, pos, constraints, 3, x_3DOF, y_3DOF, z_3DOF);
+	double r0 = rotations[0];
+	double r1 = rotations[1];
+	double r2 = rotations[2];
 	delete[] constraints;
 	return 0;
 }

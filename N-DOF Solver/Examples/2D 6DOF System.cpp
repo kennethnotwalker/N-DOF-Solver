@@ -28,13 +28,21 @@ double returnZero_6DOF(double* A, int size) //z coordinate of end-point given al
 	return 0;
 }
 
-int _main(void)
+int main_1(void)
 {
-	double pos[3] = { 4, 0.2, 0 };
-	Constraint* constraints = halfCircleConstraints(3);
+	double pos[3] = { 4, 0.8, 0 };
+	Constraint* constraints = halfCircleConstraints(6);
+	double* rot = new double[6];
+	for (int i = 0; i < 6; i++)
+	{
+		rot[i] = 0;
+	}
+	int iter = 0;
 
-	double* rot = getRotation(pos, constraints, 6, cosTotal_6DOF, sinTotal_6DOF, returnZero_6DOF);
+	getRotation(rot, pos, constraints, 6, cosTotal_6DOF, sinTotal_6DOF, returnZero_6DOF, -1, 1.0e-4, 1.0e-99, 0, &iter);
+	cout << "iterations until solution: " << iter << endl;
 	
 	delete[] constraints;
+	delete[] rot;
 	return 0;
 }
